@@ -1,0 +1,48 @@
+name: Directory Structure Validator
+description: Ensures required folders such as src, docs, tests, or config exist in a repository.
+author: Brandon Himpfen
+
+branding:
+  icon: folder
+  color: blue
+
+inputs:
+  required-directories:
+    description: Newline, comma, or space-separated list of required directories.
+    required: false
+    default: "src docs"
+  base-path:
+    description: Base path to validate from. Defaults to the repository root.
+    required: false
+    default: "."
+  fail-on-missing:
+    description: Whether the action should fail when one or more required directories are missing.
+    required: false
+    default: "true"
+  allow-empty:
+    description: Whether empty required-directories input is allowed without failing.
+    required: false
+    default: "false"
+
+outputs:
+  valid:
+    description: true when all required directories exist; false otherwise.
+    value: ${{ steps.validate.outputs.valid }}
+  missing-directories:
+    description: Comma-separated list of missing directories.
+    value: ${{ steps.validate.outputs.missing-directories }}
+  checked-directories:
+    description: Comma-separated list of directories checked.
+    value: ${{ steps.validate.outputs.checked-directories }}
+
+runs:
+  using: composite
+  steps:
+    - id: validate
+      shell: bash
+      env:
+        INPUT_REQUIRED_DIRECTORIES: ${{ inputs.required-directories }}
+        INPUT_BASE_PATH: ${{ inputs.base-path }}
+        INPUT_FAIL_ON_MISSING: ${{ inputs.fail-on-missing }}
+        INPUT_ALLOW_EMPTY: ${{ inputs.allow-empty }}
+      run: bash "${{ github.action_path }}/scripts/validate-directories.sh"

@@ -1,0 +1,22 @@
+name: Directory Structure Validator
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-directories:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required directories
+        uses: ./
+        with:
+          required-directories: |
+            src
+            docs
+            tests
